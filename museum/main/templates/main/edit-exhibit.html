@@ -1,0 +1,55 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Редактировать Экспонат
+{% endblock %}
+
+{% block content %}
+    <h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label>Наименование экспоната</label>
+            <input type="text" name="name" class="form-control" value="{{ exhibit.name }}"><br>
+            <label>Описание экспоната</label>
+            <textarea type="text" name="description" class="form-control">{{ exhibit.description }}</textarea><br>
+            <label>Дата поступления экспоната</label>
+            <input type="date" name="period" class="form-control" value="{{ exhibit.period|date:'Y-m-d' }}"
+                   max="{{ max_date }}"><br>
+            <label>Вид искусства</label><br>
+            <select class="form-select" name="art_form">
+                {% for el in art_forms %}
+                    <option value="{{ el.id }}"
+                            {% if el.id == exhibit.art_form_id %}
+                            selected
+                            {% endif %}
+                    >{{ el.name }}</option>
+                {% endfor %}
+            </select>
+            <label>Смотрящий</label><br>
+            <select class="form-select" name="employee">
+                {% for el in employees %}
+                    <option value="{{ el.id }}"
+                            {% if el.id == exhibit.employee_id %}
+                            selected
+                            {% endif %}
+                    >{{ el.full_name }}</option>
+                {% endfor %}
+            </select>
+            {% if exhibit.image %}
+                <div class="mb-3">
+                    <label class="form-label">Текущее изображение:</label><br>
+                    <img src="{{ exhibit.image.url }}" alt="{{ exhibit.name }}" class="img-thumbnail" width="200">
+
+                </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Загрузить новое изображение</label>
+                <input type="file" class="form-control" name="image" id="image">
+            </div>
+            <button type="submit" class="btn btn-success mg-3">Редактировать</button>
+            <a href="{% url 'exhibits' %}" class="btn btn-warning mg-3">Назад</a>
+            <span>{{ error }}</span>
+        </form>
+    </h3>
+{% endblock %}

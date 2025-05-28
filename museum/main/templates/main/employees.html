@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+{% load django_tables2 %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <h1>Работники</h1>
+    <a href="create-employee" class="btn btn-primary mb-3">Добавить работника</a>
+    <form method="get">
+        {{ filter.form.as_p }}
+        <button class="btn btn-dark" type="submit">Найти</button>
+        <br>
+        <br>
+        <a href="{{ request.path }}" class="btn btn-secondary">Очистить</a>
+        <br>
+        <br>
+        <label for="per_page">Показывать по:</label>
+        <select class="form-select" aria-label="Default select example" name="per_page" id="per_page"
+                onchange="this.form.submit()">
+            <option value="5" {% if request.GET.per_page == "5" %}selected{% endif %}>5</option>
+            <option value="10" {% if request.GET.per_page == "10" %}selected{% endif %}>10</option>
+            <option value="25" {% if request.GET.per_page == "25" %}selected{% endif %}>25</option>
+            <option value="50" {% if request.GET.per_page == "50" %}selected{% endif %}>50</option>
+            <option value="2147483647" {% if request.GET.per_page == "2147483647" %}selected{% endif %}>Все</option>
+        </select>
+    </form>
+    <br>
+    {% render_table table %}
+
+{% endblock %}

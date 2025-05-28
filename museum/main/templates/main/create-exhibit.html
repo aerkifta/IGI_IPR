@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Создать экспонат
+{% endblock %}
+
+{% block content %}
+    <h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {#            {{ form.name.label_tag }}#}
+            {#            {{ form.name }}<br>#}
+            {#            {{ form.description.label_tag }}#}
+            {#            {{ form.description }}<br>#}
+            {#            {{ form.period.label_tag }}#}
+            {#            {{ form.period }}<br>#}
+            {#            {{ form.art_form.label_tag }}#}
+            {#            {{ form.art_form }}#}
+            <button type="submit" class="btn btn-success">Добавить</button>
+            <a href="{% url 'exhibits' %}" class="btn btn-warning mg-3">Назад</a>
+            <span>{{ error }}</span>
+        </form>
+    </h3>
+{% endblock %}

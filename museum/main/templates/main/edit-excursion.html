@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Редактировать Экскурсию
+{% endblock %}
+
+{% block content %}
+    <h3>
+        <form method="post">
+            {% csrf_token %}
+            <label>Наименование экскурсии</label><br>
+           <input type="text" name="name" class="form-control" value="{{ excursion.name }}"><br>
+            <label>Экспозиция</label><br>
+            <select class="form-select" name="exhibition">
+                {% for el in exhibition %}
+                    <option value="{{ el.id }}"
+                            {% if el.id == excursion.exhibition_id %}
+                            selected
+                            {% endif %}
+                    >{{ el.name }}</option>
+                {% endfor %}
+            </select><br>
+            <label>Экскурсовод</label><br>
+            <select class="form-select" name="employee">
+                {% for el in employees %}
+                    <option value="{{ el.id }}"
+                            {% if el.id == excursion.employee_id %}
+                            selected
+                            {% endif %}
+                    >{{ el.full_name }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <button type="submit" class="btn btn-success mg-3">Редактировать</button>
+            <a href="{% url 'excursions' %}" class="btn btn-warning mg-3">Назад</a>
+            <span>{{ error }}</span>
+        </form>
+    </h3>
+{% endblock %}

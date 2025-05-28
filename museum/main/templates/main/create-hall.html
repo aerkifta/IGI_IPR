@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Создать зал
+{% endblock %}
+
+{% block content %}
+    <h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.number }}<br>
+            {{ form.title }}<br>
+            {{ form.description }}<br>
+            {{ form.level }}<br>
+            {{ form.square }}<br>
+            <button type="submit" class="btn btn-success">Добавить</button>
+            <a href="{% url 'halls' %}" class="btn btn-warning mg-3">Назад</a>
+            <span>{{ error }}</span>
+        </form>
+    </h3>
+{% endblock %}

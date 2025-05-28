@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Редактировать экспозицию
+{% endblock %}
+
+{% block content %}
+    <h3>
+        <form method="post">
+            {% csrf_token %}
+            <label>Наименование</label>
+            <input type="text" name="name" class="form-control" value="{{ exhibition.name }}"><br>
+            <label>Дата с</label>
+            <input type="date" name="date_from" class="form-control"
+                   value="{{ exhibition.date_from|date:'Y-m-d' }}"><br>
+            <label>Дата по</label>
+            <input type="date" name="date_to" class="form-control" value="{{ exhibition.date_to|date:'Y-m-d' }}"><br>
+            <label for="exhibits">Выберите экспонаты:</label>
+            <select name="exhibits" id="exhibits" multiple class="form-select">
+                {% for exhibit in exhibits %}
+                    <option value="{{ exhibit.id }}" {% if exhibit in exhibition.exhibits.all %}selected{% endif %}>
+                        {{ exhibit.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <br>
+            <button type="submit" class="btn btn-success mg-3">Редактировать</button>
+            <a href="{% url 'halls' %}" class="btn btn-warning mg-3">Назад</a>
+            <span>{{ error }}</span>
+        </form>
+    </h3>
+{% endblock %}

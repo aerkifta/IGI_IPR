@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+    <h1>Экспонаты</h1>
+    {% if user.is_authenticated and user.is_superuser %}
+    <a href="create-exhibit" class="btn btn-primary mb-3">Добавить экспонат</a>
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <label>Поиск: </label>
+        <input type="text" name="keyword" class="form-control" aria-label="Sizing example input"
+               aria-describedby="inputGroup-sizing-default">
+        <br>
+        <button type="submit" class="btn btn-primary mb-3">Найти</button>
+        <a href="{{ request.path }}" class="btn btn-secondary mb-3">Очистить</a>
+    </form>
+    <form method="GET">
+        {% csrf_token %}
+        <button type="submit" name="latest" value="latest"
+                class="btn btn-outline-primary {% if request.GET.period == '7' %}active{% endif %}">
+            Недавно поступившие
+        </button>
+    </form>
+
+    {% if exhibits %}
+        {% for el in exhibits %}
+            <div class="alert alert-warning mt-2">
+                {% if el.image %}
+                    <img src="{{ el.image.url }}" alt="{{ el.name }}" class="img-thumbnail" width="200">
+                {% endif %}
+
+                <h4>Вид искусства: {{ el.art_form.name }}</h4>
+                <h3>Наименование экспоната: {{ el.name }}</h3>
+                <p>Описание: {{ el.description }}</p>
+                <h5>Дата поступления: {{ el.period }}</h5>
+                <h7>Смотрящий: {{ el.employee }}</h7><br>
+                {% if user.is_authenticated and user.is_superuser %}
+                <a href="edit-exhibit/{{ el.id }}" class="btn btn-info mb-3">Редактировать</a>
+                <a href="delete-exhibit/{{ el.id }}" class="btn btn-danger mb-3">Удалить</a>
+            {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Нет инфоромации</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Редактировать работника
+{% endblock %}
+
+{% block content %}
+    <h3>
+        <form method="post">
+            {% csrf_token %}
+            <label>ФИО</label>
+            <input type="text" name="full_name" class="form-control" value="{{ employee.full_name }}"><br>
+            <label>Дата рождения</label>
+            <input type="date" name="birth_date" class="form-control" value="{{ employee.birth_date|date:'Y-m-d' }}"
+                   min="{{ min_date }}" max="{{ max_date }}"><br>
+            <label>Телефон</label>
+            <input type="text" name="phone" class="form-control" value="{{ employee.phone }}"
+                   placeholder="+375 (29) 000-00-00"><br>
+            <label>Должность</label>
+            <select class="form-select" name="type">
+                {% for el in types %}
+                    <option value="{{ el.id }}"
+                            {% if el.id == employee.type_id %}
+                            selected
+                            {% endif %}
+                    >{{ el.name }}</option>
+                {% endfor %}
+            </select>
+            <label>Зал</label>
+            <select class="form-select" name="hall">
+                {% for el in halls %}
+                    <option value="{{ el.id }}"
+                            {% if el.id == employee.hall_id %}
+                            selected
+                            {% endif %}
+                    >{{ el.title }}</option>
+                {% endfor %}
+            </select>
+        <br>
+            <button type="submit" class="btn btn-success mg-3">Редактировать</button>
+            <a href="{% url 'halls' %}" class="btn btn-warning mg-3">Назад</a>
+            <span>{{ error }}</span>
+        </form>
+    </h3>
+{% endblock %}
