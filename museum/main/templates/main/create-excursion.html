@@ -1,17 +1,41 @@
 {% extends 'main/base.html' %}
 
-{% block title %}
-    Добавить экскурсию
-{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Добавить</button>
-            <a href="{% url 'excursions' %}" class="btn btn-warning mg-3">Назад</a>
-            <span>{{ error }}</span>
-        </form>
-    </h3>
+
+<div class="page-wrapper">
+
+    <h1 class="page-title">{{ title }}</h1>
+
+    <form method="post" class="form-block">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" style="font-weight:600;">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="errorlist">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Сохранить</button>
+            <a href="{% url 'excursions' %}" class="btn secondary">Назад</a>
+        </div>
+
+        {% if error %}
+            <div class="errorlist" style="margin-top:10px;">{{ error }}</div>
+        {% endif %}
+
+    </form>
+
+</div>
+
 {% endblock %}

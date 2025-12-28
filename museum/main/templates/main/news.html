@@ -1,0 +1,49 @@
+{% extends 'main/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<a href="{% url 'create-news' %}" class="btn btn-primary mb-3">Добавить новость</a>
+
+{% for el in news %}
+<div class="news-item" data-id="{{ el.id }}">
+    {% if el.image %}
+    <img src="{{ el.image.url }}" alt="{{ el.title }}" width="300">
+    {% endif %}
+
+    <h2>{{ el.name }}</h2>
+    <p>{{ el.summary }}</p>
+
+    <button class="toggle-button btn btn-secondary btn-sm" type="button">Читать далее...</button>
+    <div class="content-block" style="display:none;">
+        {{ el.description }}
+    </div>
+
+    <a href="{% url 'edit-news' el.id %}" class="btn btn-sm btn-primary">Редактировать новость</a>
+    <a href="{% url 'delete-news' el.id %}" class="btn btn-sm btn-danger">Удалить новость</a>
+</div>
+<hr>
+{% empty %}
+<p>Новостей нет.</p>
+{% endfor %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.toggle-button');
+            if (!btn) return;
+
+            const item = btn.closest('.news-item');
+            if (!item) return;
+
+            const block = item.querySelector('.content-block');
+            if (!block) return;
+
+            const isHidden = window.getComputedStyle(block).display === 'none';
+            block.style.display = isHidden ? 'block' : 'none';
+            btn.textContent = isHidden ? 'Скрыть' : 'Читать далее...';
+        });
+    });
+</script>
+{% endblock %}

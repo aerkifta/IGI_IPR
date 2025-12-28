@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Музей — страница интерактивности</title>
+    <style>
+        :root {
+            --bg: #f7f7f7;
+            --fg: #222;
+            --accent: #0a74da
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--fg)
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 24px auto;
+            padding: 18px
+        }
+
+        /* BANNERS */
+        .banner-wrap {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 16px
+        }
+
+        .banner {
+            display: flex;
+            transition: transform .6s ease;
+            width: 100%
+        }
+
+        .banner a {
+            min-height: 160px;
+            display: block;
+            flex: 1 0 100%;
+            text-decoration: none;
+            color: inherit
+        }
+
+        .banner img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block
+        }
+
+        .banner-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin: 8px 0
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .06)
+        }
+
+        /* animated images on scroll */
+        .scroll-grid {
+            display: grid;
+            grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin: 18px 0
+        }
+
+        .scroll-item {
+            height: 160px;
+            overflow: hidden;
+            border-radius: 8px;
+            transform: translateY(20px) scale(.98);
+            opacity: 0;
+            transition: all .7s ease
+        }
+
+        .scroll-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block
+        }
+
+        .scroll-item.inview {
+            transform: none;
+            opacity: 1
+        }
+
+        /* 3D cards */
+        .cards-row {
+            display: flex;
+            gap: 12px;
+            margin: 18px 0
+        }
+
+        .vol-card {
+            width: 200px;
+            height: 220px;
+            perspective: 900px
+        }
+
+        .vol-card .inner {
+            height: 100%;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fff, #f3f8ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(12, 20, 40, .08);
+            transition: transform .35s ease;
+            transform-style: preserve-3d
+        }
+
+        .vol-card:hover .inner {
+            transform: rotateX(10deg) rotateY(-10deg) translateZ(10px)
+        }
+
+        /* form controls that can be toggled */
+        .prefs {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .pref-input {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        /* promo price */
+        .price-box {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        /* countdown */
+        .countdown {
+            font-weight: 700
+        }
+
+        /* table area */
+        table.matrix {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+            table-layout: fixed
+        }
+
+        table.matrix td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            user-select: none
+        }
+
+        td.selected-even {
+            background: rgba(10, 130, 200, .15)
+        }
+
+        td.selected-odd {
+            background: rgba(200, 90, 140, .12)
+        }
+
+        td.cell-fixed {
+            width: 60px
+        }
+
+        /* small helpers */
+        .row {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        input[type=number] {
+            width: 80px
+        }
+
+        .muted {
+            color: #666;
+            font-size: 13px
+        }
+
+        /* responsive */
+        @media (max-width: 720px) {
+            .cards-row {
+                flex-direction: column
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Интерактивная страница — Музей</h1>
+
+    <!-- Banners -->
+    <div class="card banner-wrap">
+        <div id="bannerContainer" class="banner"></div>
+        <div class="banner-controls">
+            <label>Интервал (мс): <input id="bannerInterval" type="number" value="3000" min="500"></label>
+            <button id="prevBanner">◀</button>
+            <button id="nextBanner">▶</button>
+            <span class="muted">(Пауза при потере фокуса окна)</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="card" style="flex:1">
+            <h3>Визуальные эффекты</h3>
+            <div class="scroll-grid" id="scrollGrid">
+                <div class="scroll-item"><img src="https://picsum.photos/seed/a/600/400" alt=""></div>
+                <div class="scroll-item"><img src="https://picsum.photos/seed/b/600/400" alt=""></div>
+                <div class="scroll-item"><img src="https://picsum.photos/seed/c/600/400" alt=""></div>
+                <div class="scroll-item"><img src="https://picsum.photos/seed/d/600/400" alt=""></div>
+            </div>
+
+            <div class="cards-row">
+                <div class="vol-card">
+                    <div class="inner">Карточка A</div>
+                </div>
+                <div class="vol-card">
+                    <div class="inner">Карточка B</div>
+                </div>
+                <div class="vol-card">
+                    <div class="inner">Карточка C</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="width:320px">
+            <h3>Настройки текста и фона</h3>
+            <div class="prefs">
+                <label class="pref-input"><input type="checkbox" id="enableFontSize"> Размер шрифта</label>
+                <label class="pref-input"><input type="checkbox" id="enableFG"> Цвет текста</label>
+                <label class="pref-input"><input type="checkbox" id="enableBG"> Цвет фона</label>
+            </div>
+            <div id="prefsArea"></div>
+        </div>
+
+        <div class="card" style="width:320px">
+            <h3>Промокоды / Расчёт цены</h3>
+            <div class="row">
+                <input id="basePrice" type="number" value="1000"> BYN
+                <input id="promoCode" placeholder="Введите промокод">
+                <button id="applyPromo">Применить</button>
+            </div>
+            <div class="price-box">Итог:
+                <div id="finalPrice">1000</div>
+                BYN
+            </div>
+            <div class="muted">Доступные коды: <b>SAVE10</b> (10%), <b>VIP25</b> (25%), <b>FREE50</b> (50%)</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="card" style="flex:1">
+            <h3>Проверка возраста</h3>
+            <label>Дата рождения: <input id="birthdate" type="date"></label>
+            <button id="checkAge">Проверить</button>
+            <div id="ageResult"></div>
+        </div>
+
+        <div class="card" style="width:320px">
+            <h3>Часовой обратный отсчёт</h3>
+            <div>До конца сессии: <span id="countdown" class="countdown">—</span></div>
+        </div>
+    </div>
+
+    <!-- Matrix generator -->
+    <div class="card">
+        <h3>Генератор квадратной таблицы</h3>
+        <div class="row">
+            <label>Размер: <input id="matrixSize" type="number" value="5" min="1" max="20"></label>
+            <button id="genMatrix">Создать</button>
+            <label>Макс выделений в ряду/столбце: <input id="maxSelect" type="number" value="2" min="1"></label>
+            <button id="transpose">Транспонировать</button>
+            <button id="addRow">Добавить ряд</button>
+            <button id="addCol">Добавить колонку</button>
+        </div>
+        <div id="matrixWrap" style="overflow:auto;margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+        <h3>Наследование и декоратор — демонстрация</h3>
+        <button id="demoProto">Показать (прототип)</button>
+        <button id="demoClass">Показать (class/extends)</button>
+        <pre id="demoOut" style="white-space:pre-wrap"></pre>
+    </div>
+
+    <h2>Ассоциативный массив: экспорт товаров</h2>
+
+    <div class="task-block">
+        <label>Введите данные (формат: товар,страна,объем; ...):</label>
+        <input id="exportData" type="text"
+               placeholder="Телевизор,Казахстан,1200; Телевизор,Узбекистан,500; Телефон,Беларусь,900">
+
+        <label>Введите название товара:</label>
+        <input id="exportProduct" type="text" placeholder="Телевизор">
+
+        <button id="exportRun">Выполнить</button>
+
+        <pre id="exportOut" class="output"></pre>
+    </div>
+
+
+</div>
+
+<script>
+    /* ================= BANNERS ================== */
+    const banners = [
+        {img: 'https://picsum.photos/seed/ban1/1200/400', url: 'https://example.com/exhibit1', title: 'Выставка 1'},
+        {img: 'https://picsum.photos/seed/ban2/1200/400', url: 'https://example.com/exhibit2', title: 'Выставка 2'},
+        {img: 'https://picsum.photos/seed/ban3/1200/400', url: 'https://example.com/exhibit3', title: 'Выставка 3'}
+    ];
+    const bannerContainer = document.getElementById('bannerContainer');
+    let currentBanner = 0;
+
+    function renderBanners() {
+        bannerContainer.innerHTML = '';
+        banners.forEach(b => {
+            const a = document.createElement('a');
+            a.href = b.url;
+            a.target = '_blank';
+            const img = document.createElement('img');
+            img.src = b.img;
+            img.alt = b.title;
+            a.appendChild(img);
+            bannerContainer.appendChild(a);
+        });
+        updateBannerPosition();
+    }
+
+    function updateBannerPosition() {
+        bannerContainer.style.transform = `translateX(-${currentBanner * 100}%)`;
+    }
+
+    renderBanners();
+
+    // rotation with admin interval and visibility/focus pause
+    const intervalInput = document.getElementById('bannerInterval');
+    let bannerTimer = null;
+
+    function startBannerTimer() {
+        stopBannerTimer();
+        const ms = Math.max(200, Number(intervalInput.value) || 3000);
+        bannerTimer = setInterval(() => {
+            if (document.hasFocus()) nextBanner();
+        }, ms);
+    }
+
+    function stopBannerTimer() {
+        if (bannerTimer) {
+            clearInterval(bannerTimer);
+            bannerTimer = null
+        }
+    }
+
+    function nextBanner() {
+        currentBanner = (currentBanner + 1) % banners.length;
+        updateBannerPosition();
+    }
+
+    function prevBanner() {
+        currentBanner = (currentBanner - 1 + banners.length) % banners.length;
+        updateBannerPosition();
+    }
+
+    document.getElementById('nextBanner').addEventListener('click', () => {
+        nextBanner();
+    });
+    document.getElementById('prevBanner').addEventListener('click', () => {
+        prevBanner();
+    });
+    intervalInput.addEventListener('change', startBannerTimer);
+    window.addEventListener('focus', () => startBannerTimer());
+    window.addEventListener('blur', () => stopBannerTimer());
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopBannerTimer(); else startBannerTimer();
+    });
+    startBannerTimer();
+
+    /* ================ Scroll animation ================ */
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('inview');
+        });
+    }, {threshold: 0.2});
+    document.querySelectorAll('.scroll-item').forEach(el => io.observe(el));
+
+    /* ================ Preferences dynamic inputs ================ */
+    const prefsArea = document.getElementById('prefsArea');
+
+    function makeControl(id, label, type = 'color', min, max, step) {
+        const wrapper = document.createElement('div');
+        wrapper.style.marginTop = '8px';
+        const input = document.createElement('input');
+        input.type = type;
+        input.id = id;
+        if (min) input.min = min;
+        if (max) input.max = max;
+        if (step) input.step = step;
+        const lbl = document.createElement('label');
+        lbl.textContent = label;
+        lbl.style.marginLeft = '6px';
+        wrapper.appendChild(input);
+        wrapper.appendChild(lbl);
+        return {wrapper, input};
+    }
+
+    const enableFontSize = document.getElementById('enableFontSize');
+    const enableFG = document.getElementById('enableFG');
+    const enableBG = document.getElementById('enableBG');
+
+    enableFontSize.addEventListener('change', () => {
+        if (enableFontSize.checked) {
+            const ctrl = makeControl('fontSizeControl', 'px', 'number');
+            ctrl.input.type = 'number';
+            ctrl.input.value = 16;
+            ctrl.input.min = 10;
+            ctrl.input.max = 36;
+            prefsArea.appendChild(ctrl.wrapper);
+            ctrl.input.addEventListener('input', () => {
+                document.documentElement.style.fontSize = ctrl.input.value + 'px'
+            });
+        } else {
+            const el = document.getElementById('fontSizeControl');
+            if (el) el.parentNode.remove();
+            document.documentElement.style.fontSize = '';
+        }
+    });
+    enableFG.addEventListener('change', () => {
+        if (enableFG.checked) {
+            const ctrl = makeControl('fgControl', 'цвет текста');
+            prefsArea.appendChild(ctrl.wrapper);
+            ctrl.input.addEventListener('input', () => {
+                document.documentElement.style.setProperty('--fg', ctrl.input.value)
+            });
+        } else {
+            const el = document.getElementById('fgControl');
+            if (el) el.parentNode.remove();
+            document.documentElement.style.setProperty('--fg', '');
+        }
+    });
+    enableBG.addEventListener('change', () => {
+        if (enableBG.checked) {
+            const ctrl = makeControl('bgControl', 'цвет фона');
+            prefsArea.appendChild(ctrl.wrapper);
+            ctrl.input.addEventListener('input', () => {
+                document.documentElement.style.setProperty('--bg', ctrl.input.value)
+            });
+        } else {
+            const el = document.getElementById('bgControl');
+            if (el) el.parentNode.remove();
+            document.documentElement.style.setProperty('--bg', '');
+        }
+    });
+
+    /* ================= PROMO CODES ================= */
+    const codes = {'SAVE10': 0.10, 'VIP25': 0.25, 'FREE50': 0.50};
+    const basePrice = document.getElementById('basePrice');
+    const promoCode = document.getElementById('promoCode');
+    const finalPrice = document.getElementById('finalPrice');
+
+    function computePrice() {
+        let p = Number(basePrice.value) || 0;
+        const code = promoCode.value.trim().toUpperCase();
+        if (codes[code]) p = Math.round(p * (1 - codes[code]));
+        finalPrice.textContent = p;
+    }
+
+    document.getElementById('applyPromo').addEventListener('click', (e) => {
+        e.preventDefault();
+        computePrice();
+    });
+
+    /* ================= AGE CHECK ================= */
+    document.getElementById('checkAge').addEventListener('click', () => {
+        const val = document.getElementById('birthdate').value;
+        const out = document.getElementById('ageResult');
+        out.textContent = '';
+        if (!val) {
+            out.textContent = 'Укажите дату.';
+            return;
+        }
+        const bd = new Date(val);
+        const now = new Date();
+        let age = now.getFullYear() - bd.getFullYear();
+        const m = now.getMonth() - bd.getMonth();
+        if (m < 0 || (m === 0 && now.getDate() < bd.getDate())) age--;
+        if (age >= 18) {
+            const days = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'];
+            out.textContent = `Вам ${age} лет. День недели рождения: ${days[bd.getDay()]}.`;
+        } else {
+            alert('Вы несовершеннолетний(ая). Для использования сайта требуется разрешение родителей.');
+            out.textContent = `Несовершеннолетний: ${age} лет.`
+        }
+    });
+
+    /* =============== COUNTDOWN (persistent) ================= */
+    const countdownEl = document.getElementById('countdown');
+    const COUNT_KEY = 'museum_visit_start_v1';
+
+    function ensureStart() {
+        let start = localStorage.getItem(COUNT_KEY);
+        if (!start) {
+            start = Date.now().toString();
+            localStorage.setItem(COUNT_KEY, start);
+        }
+        return Number(start);
+    }
+
+    function updateCountdown() {
+        const start = ensureStart();
+        const end = start + 3600 * 1000;
+        const remaining = end - Date.now();
+        if (remaining <= 0) {
+            countdownEl.textContent = '00:00:00';
+            localStorage.removeItem(COUNT_KEY);
+            return;
+        }
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        countdownEl.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    /* =============== MATRIX / TABLE ================= */
+    let matrix = [];
+    let matrixSize = 5;
+    const matrixWrap = document.getElementById('matrixWrap');
+
+    function genMatrix(n) {
+        matrixSize = n;
+        matrix = [];
+        for (let i = 0; i < n; i++) {
+            const row = [];
+            for (let j = 0; j < n; j++) row.push(Math.floor(Math.random() * 100) + 1);
+            matrix.push(row);
+        }
+        renderMatrix();
+    }
+
+    function renderMatrix() {
+        const tbl = document.createElement('table');
+        tbl.className = 'matrix';
+        matrix.forEach((row, i) => {
+            const tr = document.createElement('tr');
+            row.forEach((val, j) => {
+                const td = document.createElement('td');
+                td.className = 'cell-fixed';
+                td.textContent = val;
+                td.dataset.r = i;
+                td.dataset.c = j;
+                td.addEventListener('click', () => onCellClick(td));
+                tr.appendChild(td);
+            });
+            tbl.appendChild(tr);
+        });
+        matrixWrap.innerHTML = '';
+        matrixWrap.appendChild(tbl);
+    }
+
+    document.getElementById('genMatrix').addEventListener('click', () => {
+        const n = Number(document.getElementById('matrixSize').value) || 5;
+        genMatrix(n);
+    });
+
+    // selection rules
+    function getMaxSel() {
+        return Math.max(1, Number(document.getElementById('maxSelect').value) || 1);
+    }
+
+    function onCellClick(td) {
+        const r = Number(td.dataset.r), c = Number(td.dataset.c);
+        const table = matrixWrap.querySelector('table');
+        const cells = table.querySelectorAll('td');
+        const selected = table.querySelectorAll('td.selected-even, td.selected-odd');
+        const selInRow = table.querySelectorAll(`td[data-r='${r}'].selected-even, td[data-r='${r}'].selected-odd`).length;
+        const selInCol = table.querySelectorAll(`td[data-c='${c}'].selected-even, td[data-c='${c}'].selected-odd`).length;
+        // adjacency left/right in same row
+        const left = table.querySelector(`td[data-r='${r}'][data-c='${c - 1}']`);
+        const right = table.querySelector(`td[data-r='${r}'][data-c='${c + 1}']`);
+        const max = getMaxSel();
+        const isSelected = td.classList.contains('selected-even') || td.classList.contains('selected-odd');
+        if (isSelected) {
+            td.classList.remove('selected-even', 'selected-odd');
+            return;
+        }
+        if (selInRow >= max || selInCol >= max) {
+            alert('Превышено максимальное количество выделений в этой строке или столбце');
+            return;
+        }
+        if ((left && (left.classList.contains('selected-even') || left.classList.contains('selected-odd'))) || (right && (right.classList.contains('selected-even') || right.classList.contains('selected-odd')))) {
+            alert('Нельзя выделять соседей слева или справа');
+            return;
+        }
+        // select: color depends on evenness
+        const v = Number(td.textContent) || 0;
+        if (v % 2 === 0) td.classList.add('selected-even'); else td.classList.add('selected-odd');
+    }
+
+    document.getElementById('transpose').addEventListener('click', () => {
+        const n = matrix.length;
+        const res = Array.from({length: n}, () => Array(n).fill(0));
+        for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) res[j][i] = matrix[i][j];
+        matrix = res;
+        renderMatrix();
+    });
+    document.getElementById('addRow').addEventListener('click', () => {
+        const n = matrix.length;
+        matrix.push(Array.from({length: n}, () => Math.floor(Math.random() * 100) + 1));
+        renderMatrix();
+    });
+    document.getElementById('addCol').addEventListener('click', () => {
+        matrix.forEach(row => row.push(Math.floor(Math.random() * 100) + 1));
+        renderMatrix();
+    });
+
+    // initialize
+    genMatrix(5);
+
+    /* =============== INHERITANCE DEMO + DECORATOR ================= */
+    // Prototype-based (functional) inheritance
+    function demoProto() {
+        const out = [];
+
+        function Base(name, year) {
+            this._name = name;
+            this._year = year;
+        }
+
+        Base.prototype.getName = function () {
+            return this._name;
+        };
+        Base.prototype.setName = function (v) {
+            this._name = v;
+        };
+        Base.prototype.age = function () {
+            return new Date().getFullYear() - this._year;
+        };
+
+        function Derived(name, year, role) {
+            Base.call(this, name, year);
+            this._role = role
+        }
+
+        Derived.prototype = Object.create(Base.prototype);
+        Derived.prototype.constructor = Derived;
+        Derived.prototype.getRole = function () {
+            return this._role;
+        };
+        Derived.prototype.setRole = function (v) {
+            this._role = v;
+        };
+        // decorator: wrap age() to log
+        const originalAge = Base.prototype.age;
+        Base.prototype.age = function () {
+            out.push('[decorator] age() called');
+            return originalAge.call(this);
+        };
+        const a = new Derived('Музей A', 2000, 'curator');
+        out.push(`Name:${a.getName()}, Age:${a.age()}, Role:${a.getRole()}`);
+        return out.join('\n');
+    }
+
+    // class-based
+    function demoClass() {
+        class BaseClass {
+            constructor(name, year) {
+                this._name = name;
+                this._year = year
+            }
+
+            get name() {
+                return this._name
+            }
+
+            set name(v) {
+                this._name = v
+            }
+
+            age() {
+                return new Date().getFullYear() - this._year
+            }
+        }
+
+        // decorator function
+        function loggerDec(fn) {
+            return function (...args) {
+                const r = fn.apply(this, args);
+                return r;
+            }
+        }
+
+        class SubClass extends BaseClass {
+            constructor(name, year, role) {
+                super(name, year);
+                this._role = role
+            }
+
+            get role() {
+                return this._role
+            }
+
+            set role(v) {
+                this._role = v
+            }
+        }
+
+        // apply decorator to prototype method age
+        const orig = BaseClass.prototype.age;
+        BaseClass.prototype.age = loggerDec(orig);
+        const b = new SubClass('Музей B', 2010, 'guide');
+        let out = '';
+        out += `Name:${b.name}, Age:${b.age()}, Role:${b.role}`;
+        return out;
+    }
+
+    document.getElementById('demoProto').addEventListener('click', () => {
+        document.getElementById('demoOut').textContent = demoProto();
+    });
+    document.getElementById('demoClass').addEventListener('click', () => {
+        document.getElementById('demoOut').textContent = demoClass();
+    });
+
+    /* =============== ASSOCIATIVE ARRAYS (objects) ================= */
+    /* =============== EXPORTS TASK (associative array) ================= */
+    document.getElementById('exportRun').addEventListener('click', () => {
+        const text = document.getElementById('exportData').value.trim();
+        const product = document.getElementById('exportProduct').value.trim();
+        const out = document.getElementById('exportOut');
+
+        if (!text || !product) {
+            out.textContent = "Введите данные и название товара.";
+            return;
+        }
+
+        // Пример ввода:
+        // "Телевизор,Казахстан,1200; Телевизор,Узбекистан,500; Телефон,Беларусь,900"
+        const entries = text.split(";").map(e => e.trim()).filter(e => e);
+
+        const exportList = [];
+
+        for (let item of entries) {
+            const parts = item.split(",");
+            if (parts.length !== 3) continue;
+
+            const [prod, country, volumeStr] = parts.map(p => p.trim());
+            const volume = parseInt(volumeStr);
+
+            if (!isNaN(volume)) {
+                exportList.push({prod, country, volume});
+            }
+        }
+
+        // Фильтруем по нужному товару
+        const filtered = exportList.filter(e => e.prod.toLowerCase() === product.toLowerCase());
+
+        if (filtered.length === 0) {
+            out.textContent = "Такой товар не найден.";
+            return;
+        }
+
+        // Страны
+        const countries = filtered.map(e => e.country);
+
+        // Общий объём
+        const totalVolume = filtered.reduce((sum, e) => sum + e.volume, 0);
+
+        out.textContent =
+            "Товар: " + product +
+            "\nСтраны импорта: " + countries.join(", ") +
+            "\nОбщий объём экспорта: " + totalVolume + " шт.";
+    });
+
+
+    /* Accessibility: prevent image size changes */
+    // All images have object-fit so their displayed size remains fixed by container widths.
+
+</script>
+</body>
+</html>

@@ -2,8 +2,43 @@
 
 {% block title %}
 О нас
-{%endblock%}
+{% endblock %}
 
 {% block content %}
-О нас
+<h1>О нас</h1>
+<p>Добро пожаловать в наш музей! Мы сохраняем историю искусства и делимся ею с каждым посетителем. Наши экспонаты — это уникальные произведения, рассказывающие о прошлом и настоящем искусства.</p>
+
+<h2>Наша миссия</h2>
+<p>Мы стремимся вдохновлять, обучать и погружать в мир искусства через выставки, образовательные программы и мастер-классы для всех возрастов.</p>
+
+<h2>Что вы найдете в музее</h2>
+<ul>
+    <li>Коллекции живописи и скульптуры</li>
+    <li>Временные выставки современных художников</li>
+    <li>Образовательные программы и мастер-классы</li>
+</ul>
+
+<h2>Видео о нашем музее</h2>
+<div class="video-container">
+ <iframe width="560" height="315" src="https://www.youtube.com/embed/eL2nomF8ej0?si=V33CRfYtO72SJ4ym" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>
 {% endblock %}

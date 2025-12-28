@@ -1,0 +1,60 @@
+{% extends 'main/base.html' %}
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Оставить отзыв</h2>
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Ваша оценка:</label><br>
+      <div id="star-rating" style="font-size: 2rem; cursor: pointer; color: #ccc;">
+        {% for i in "12345" %}
+          <span class="star" data-value="{{ forloop.counter }}">&#9733;</span>
+        {% endfor %}
+      </div>
+      {{ form.grade }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.text.label_tag }}
+      {{ form.text }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const stars = document.querySelectorAll("#star-rating .star");
+  const gradeInput = document.getElementById("id_grade");
+
+  stars.forEach(star => {
+    star.addEventListener("mouseover", function() {
+      highlightStars(this.dataset.value);
+    });
+
+    star.addEventListener("click", function() {
+      gradeInput.value = this.dataset.value;
+      highlightStars(this.dataset.value);
+    });
+
+    star.addEventListener("mouseleave", function() {
+      highlightStars(gradeInput.value);
+    });
+  });
+
+  function highlightStars(rating) {
+    stars.forEach(star => {
+      if (star.dataset.value <= rating) {
+        star.style.color = "#ffc107";
+      } else {
+        star.style.color = "#ccc";
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

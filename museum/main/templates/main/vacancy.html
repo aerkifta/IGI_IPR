@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Просмотр вакансии
+{% endblock %}
+
+{% block content %}
+
+<h1>Позиция {{vacancy.name}}</h1>
+<h2>Заработная плата {{vacancy.salary}}</h2>
+<p>{{vacancy.description}}</p>
+<button class="btn btn-sm btn-primary"> Откликнуться</button>
+
+<a href="{% url 'vacancies'  %}" class="btn btn-sm btn-primary ">Вернуться</a>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<div class="cart-wrapper">
+
+    <h1 class="page-title">Корзина</h1>
+
+    <div id="cart-list" class="cart-list"></div>
+    <div class="promo-block">
+        <input type="text" id="promo-input" placeholder="Введите промокод" class="promo-input">
+        <button type="button" onclick="applyPromo()" class="btn-promo">Применить</button>
+    </div>
+
+    <p id="promo-message" class="promo-message"></p>
+
+
+    <h3 id="total-price" class="total-price">Итого: 0 BYN</h3>
+
+    <form method="post" action="{% url 'make-order' %}">
+        {% csrf_token %}
+        <input type="hidden" name="items_json" id="items_json">
+        <input type="hidden" name="discount" id="discount">
+        <button class="btn-order">Оформить заказ</button>
+    </form>
+</div>
+
+<script>
+    function loadCart() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const container = document.getElementById("cart-list");
+        container.innerHTML = "";
+
+        let total = 0;
+
+        cart.forEach((item, index) => {
+            total += parseFloat(item.price);
+
+            container.innerHTML += `
+                <div class="cart-item">
+                    <div class="cart-name">${item.name}</div>
+                    <div class="cart-price">${item.price} BYN</div>
+                    <button onclick="removeItem(${index})" class="btn-remove">Удалить</button>
+                </div>
+            `;
+        });
+
+        document.getElementById("total-price").innerText = "Итого: " + total + " BYN";
+        document.getElementById("items_json").value = JSON.stringify(cart);
+    }
+
+    function removeItem(i) {
+        let cart = JSON.parse(localStorage.getItem("cart"));
+        cart.splice(i, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
+
+    function applyPromo() {
+    const code = document.getElementById("promo-input").value;
+
+    fetch("{% url 'check-promocode' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({ code: code })
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        const msg = document.getElementById("promo-message");
+
+        if (!data.valid) {
+            msg.innerText = "Промокод недействителен";
+            msg.style.color = "red";
+            return;
+        }
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+
+        const newTotal = total - (total * data.discount / 100);
+        document.getElementById("total-price").innerText = "Итого: " + newTotal + " BYN";
+
+        msg.innerText = "Промокод применён! Скидка: " + data.discount + "%";
+        msg.style.color = "green";
+
+        localStorage.setItem("discount", data.discount);
+    });
+}
+
+
+    document.addEventListener("DOMContentLoaded", loadCart);
+    document.getElementById("discount").value = localStorage.getItem("discount") || 0;
+</script>
+
+<style>
+    .cart-wrapper {
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
+
+    .cart-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        align-items: center;
+    }
+
+    .cart-name {
+        font-size: 18px;
+    }
+
+    .cart-price {
+        font-weight: bold;
+    }
+
+    .btn-remove {
+        background: #d9534f;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .btn-order {
+        background: #1a73e8;
+        color: white;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+    .total-price {
+        margin-top: 15px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+</style>
+
+{% endblock %}

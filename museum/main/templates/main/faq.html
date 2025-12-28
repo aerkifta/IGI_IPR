@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<a href="{% url 'create-faq' %}" class="btn btn-primary mb-3">Добавить FAQ</a>
+
+{% for el in faq %}
+<div class="faq-item" data-id="{{ el.id }}">
+
+    <h2>{{ el.question }}</h2>
+
+    <button class="toggle-button btn btn-secondary btn-sm" type="button">Ответ:</button>
+    <div class="content-block" style="display:none;">
+        {{ el.answer }}
+    </div>
+
+    <a href="{% url 'edit-faq' el.id %}" class="btn btn-sm btn-primary">Редактировать FAQ</a>
+    <a href="{% url 'delete-faq' el.id %}" class="btn btn-sm btn-danger">Удалить FAQ</a>
+</div>
+<hr>
+{% empty %}
+<p>Вопросов нет.</p>
+{% endfor %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.toggle-button');
+            if (!btn) return;
+
+            const item = btn.closest('.faq-item');
+            if (!item) return;
+
+            const block = item.querySelector('.content-block');
+            if (!block) return;
+
+            const isHidden = window.getComputedStyle(block).display === 'none';
+            block.style.display = isHidden ? 'block' : 'none';
+            btn.textContent = isHidden ? 'Скрыть' : 'Читать далее...';
+        });
+    });
+</script>
+{% endblock %}

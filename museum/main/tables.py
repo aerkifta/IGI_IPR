@@ -14,15 +14,15 @@ class HallTable(Table):
         edit_url = reverse('edit-hall', args=[record.pk])
         delete_url = reverse('delete-hall', args=[record.pk])
         return format_html(
-            '<a href="{}" class="btn btn-sm btn-primary">Редактировать</a> '
-            '<a href="{}" class="btn btn-sm btn-danger">Удалить</a>',
+            '<a href="{}" class="btn info">Редактировать</a> '
+            '<a href="{}" class="btn danger">Удалить</a>',
             edit_url,
             delete_url
         )
 
     class Meta:
         model = Hall
-        template_name = "django_tables2/bootstrap5.html"
+        template_name = "django_tables2/table.html"
         fields = ("number", "title", "description", "level", "square", "actions")
 
 
@@ -35,15 +35,15 @@ class EmployeesTable(Table):
         edit_url = reverse('edit-employee', args=[record.pk])
         delete_url = reverse('delete-employee', args=[record.pk])
         return format_html(
-            '<a href="{}" class="btn btn-sm btn-primary">Редактировать</a> '
-            '<a href="{}" class="btn btn-sm btn-danger">Удалить</a>',
+            '<a href="{}" class="btn info">Редактировать</a> '
+            '<a href="{}" class="btn danger">Удалить</a>',
             edit_url,
             delete_url
         )
 
     class Meta:
-        model = Hall
-        template_name = "django_tables2/bootstrap5.html"
+        model = Employees
+        template_name = "django_tables2/table.html"
         fields = ("full_name", "birth_date", "phone", "type", "hall", "hall__level", "actions")
 
 
@@ -56,16 +56,16 @@ class ExhibitionTable(Table):
         edit_url = reverse('edit-exhibition', args=[record.pk])
         delete_url = reverse('delete-exhibition', args=[record.pk])
         return format_html(
-            '<a href="{}" class="btn btn-sm btn-primary">Редактировать</a> '
-            '<a href="{}" class="btn btn-sm btn-danger">Удалить</a>',
+            '<a href="{}" class="btn info">Редактировать</a> '
+            '<a href="{}" class="btn danger">Удалить</a>',
             edit_url,
             delete_url
         )
 
     class Meta:
         model = Exhibition
-        template_name = "django_tables2/bootstrap5.html"
-        fields = ("name", "date_from", "date_to", "exhibits")
+        template_name = "django_tables2/table.html"
+        fields = ("name", "date_from", "date_to", "exhibits", "actions")
 
 
 class ExcursionTable(Table):
@@ -74,22 +74,24 @@ class ExcursionTable(Table):
     actions = tables.Column(empty_values=(), verbose_name='Действия')
 
     def __init__(self, *args, user=None, **kwargs):
+        self.user = user
         if not (user and user.is_superuser):
             self.base_columns.pop('actions', None)
         super().__init__(*args, **kwargs)
 
-    def render_actions(self, record, user):
-        if user.is_superuser:
+    def render_actions(self, record):
+        if self.user and self.user.is_superuser:
             edit_url = reverse('edit-excursion', args=[record.pk])
             delete_url = reverse('delete-excursion', args=[record.pk])
             return format_html(
-            '<a href="{}" class="btn btn-sm btn-primary">Редактировать</a> '
-            '<a href="{}" class="btn btn-sm btn-danger">Удалить</a>',
-            edit_url,
-            delete_url
-        )
+                '<a href="{}" class="btn info">Редактировать</a> '
+                '<a href="{}" class="btn danger">Удалить</a>',
+                edit_url,
+                delete_url
+            )
+        return ""
 
     class Meta:
-        model = Exhibition
-        template_name = "django_tables2/bootstrap5.html"
+        model = Excursion
+        template_name = "django_tables2/table.html"
         fields = ("name", "exhibition", "employee")

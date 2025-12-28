@@ -1,0 +1,175 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Мои заказы{% endblock %}
+
+{% block content %}
+<div class="orders-wrapper">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <h1 class="page-title">Мои заказы</h1>
+
+    {% if orders %}
+    <div class="orders-list">
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-header">
+                <div class="order-id">Заказ №{{ order.id }}</div>
+                <div class="order-price">Сумма: {{ order.price }} BYN</div>
+            </div>
+
+            <div class="order-items">
+                {% for item in order.exhibits.all %}
+                <div class="order-item">
+                    <div class="order-img">
+                        {% if item.exhibit.image %}
+                        <img src="{{ item.exhibit.image.url }}" alt="{{ item.exhibit.name }}">
+                        {% else %}
+                        <div class="no-img">Нет изображения</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="order-info">
+                        <div class="item-name">{{ item.exhibit.name }}</div>
+                        <div class="item-desc">{{ item.exhibit.description }}</div>
+                        <div class="item-price">{{ item.price }} BYN</div>
+                    </div>
+                </div>
+
+
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-orders">У вас пока нет заказов.</p>
+    {% endif %}
+
+</div>
+
+<style>
+    .orders-wrapper {
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 32px;
+        margin-bottom: 25px;
+    }
+
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .order-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .order-id {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .order-price {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .order-items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .order-item {
+        display: grid;
+        grid-template-columns: 80px 1fr;
+        gap: 15px;
+        background: #f7f7f7;
+        border-radius: 8px;
+        padding: 12px;
+        align-items: start;
+    }
+
+    .order-img img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .no-img {
+        width: 80px;
+        height: 80px;
+        background: #e0e0e0;
+        color: #555;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        text-align: center;
+        padding: 4px;
+    }
+
+    .order-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .item-desc {
+        color: #555;
+        font-size: 14px;
+    }
+
+    .item-price {
+        margin-top: 6px;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+
+    .no-orders {
+        font-size: 20px;
+        color: #666;
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .message {
+        background: #c8f7c5;
+        border-left: 6px solid #4caf50;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+</style>
+{% if messages %}
+<script>
+    localStorage.removeItem("cart");
+    localStorage.removeItem("discount");
+</script>
+{% endif %}
+
+{% endblock %}

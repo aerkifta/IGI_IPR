@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Редактировать FAQ
+{% endblock %}
+
+{% block content %}
+<h3>
+    <form method="post">
+        {% csrf_token %}
+        <label>Вопрос</label>
+        <input type="text" name="question" class="form-control" value="{{ faq.question }}"><br>
+        <label>Ответ</label>
+        <input type="text" name="answer" class="form-control" value="{{ faq.answer }}"><br>
+        <button type="submit" class="btn btn-success mg-3">Редактировать</button>
+        <a href="{% url 'faq' %}" class="btn btn-warning mg-3">Назад</a>
+        <span>{{ error }}</span>
+    </form>
+</h3>
+{% endblock %}

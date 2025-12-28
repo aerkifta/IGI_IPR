@@ -1,9 +1,63 @@
 {% extends 'main/base.html' %}
+{% block title %}Главная страница{% endblock %}
 
-{% block title %}
-{{ title }}
-{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Добро пожаловать в наш музей</h1>
+        <p class="lead text-muted mt-3">
+            Погрузитесь в историю, культуру и искусство — не выходя из нашего зала.
+        </p>
+        <a href="{% url 'exhibits' %}" class="btn btn-outline-primary btn-lg mt-3">Перейти к экспонатам</a>
+    </div>
 
-{%block content%}
-<h1>Главная страница</h1>
+    <div class="row g-4 mt-5">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 hover-card">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold text-primary">🖼 Наши выставки</h5>
+                    <p class="card-text text-muted">
+                        Откройте для себя уникальные экспонаты и временные выставки, которые меняются каждый сезон.
+                    </p>
+                    <a href="{% url 'excursions' %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 hover-card">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold text-primary">📅 События</h5>
+                    <p class="card-text text-muted">
+                        Лекции, мастер-классы, тематические вечера и многое другое — присоединяйтесь к культурной жизни музея.
+                    </p>
+                    <a href="{% url 'news' %}" class="btn btn-outline-primary btn-sm">Узнать больше</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 hover-card">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold text-primary">👨‍💼 Команда</h5>
+                    <p class="card-text text-muted">
+                        Познакомьтесь с людьми, которые делают музей живым и вдохновляющим каждый день.
+                    </p>
+                    <a href="{% url 'contacts' %}" class="btn btn-outline-primary btn-sm">Посмотреть</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.hover-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+</style>
 {% endblock %}

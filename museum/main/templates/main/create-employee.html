@@ -1,17 +1,50 @@
 {% extends 'main/base.html' %}
 
-{% block title %}
-    Добавить работника
-{% endblock %}
+{% block title %}Добавить работника{% endblock %}
 
 {% block content %}
-    <h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Добавить</button>
-            <a href="{% url 'halls' %}" class="btn btn-warning mg-3">Назад</a>
-            <span>{{ error }}</span>
-        </form>
-    </h3>
+
+<div class="page-wrapper">
+
+    <h1 class="page-title">Добавить работника</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        <div class="form-block">
+            {% for field in form %}
+                <div style="margin-bottom: 12px;">
+                    <label for="{{ field.id_for_label }}" style="font-weight:600;">{{ field.label }}</label><br>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color:#666;">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div style="color:red;">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if worker.contacts.image %}
+            <div style="margin-bottom:12px;">
+                <img src="{{ worker.contacts.image.url }}" width="200" class="preview">
+            </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Сохранить</button>
+            <a href="{% url 'employees' %}" class="btn secondary">Назад</a>
+        </div>
+
+        {% if error %}
+            <div style="color:red; margin-top:10px;">{{ error }}</div>
+        {% endif %}
+
+    </form>
+
+</div>
+
 {% endblock %}

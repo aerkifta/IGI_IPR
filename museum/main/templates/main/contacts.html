@@ -1,0 +1,108 @@
+{% extends 'main/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .contacts-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px 15px;
+    }
+
+    .contacts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .contact-card {
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .contact-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    .contact-card img {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+        background: #eee;
+    }
+
+    .contact-body {
+        padding: 15px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .contact-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    .contact-text {
+        font-size: 0.95rem;
+        color: #555;
+        line-height: 1.35rem;
+    }
+
+    @media (max-width: 480px) {
+        .contact-card img {
+            height: 180px;
+        }
+    }
+</style>
+
+<div class="contacts-container">
+    <h1 style="text-align:center; margin-bottom:25px;">Контакты сотрудников</h1>
+
+    <div class="contacts-grid">
+        {% for el in contacts %}
+        <div class="contact-card">
+
+            {% if el.employeecontacts.image %}
+                <img src="{{ el.employeecontacts.image.url }}" alt="{{ el.full_name }}">
+            {% endif %}
+
+            <div class="contact-body">
+                <div class="contact-title">{{ el.full_name }}</div>
+
+                {% if el.employeecontacts.work_phone %}
+                    <div class="contact-text">
+                        📞 {{ el.employeecontacts.work_phone }}
+                    </div>
+                {% endif %}
+
+                {% if el.employeecontacts.email %}
+                    <div class="contact-text">
+                        ✉️ {{ el.employeecontacts.email }}
+                    </div>
+                {% endif %}
+
+                {% if el.employeecontacts.description %}
+                    <div class="contact-text">
+                        {{ el.employeecontacts.description }}
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+        {% empty %}
+        <p>Контактов пока нет.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'main/base.html' %}
+{% block title %}Вакансии{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Актуальные вакансии</h1>
+
+    <div class="text-end mb-4">
+        <a href="{% url 'create-vacancy' %}" class="btn btn-success shadow-sm">
+            ➕ Добавить вакансию
+        </a>
+    </div>
+
+    {% if vacancies %}
+    <div class="row g-4">
+        {% for el in vacancies %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 hover-card">
+                <div class="card-body">
+                    <h5 class="card-title text-primary fw-bold">{{ el.name }}</h5>
+                    <p class="card-text mb-1">
+                        💰 <strong>Зарплата:</strong> {{ el.salary }} BYN
+                    </p>
+                    <p class="card-text text-muted small">
+                        👁 Просмотров: {{ el.response_count }}
+                    </p>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'view-vacancy' el.id %}" class="btn btn-outline-primary btn-sm">
+                            🔍 Просмотреть
+                        </a>
+                        <a href="{% url 'edit-vacancy' el.id %}" class="btn btn-outline-success btn-sm">
+                            ✏️ Редактировать
+                        </a>
+                        <a href="{% url 'delete-vacancy' el.id %}" class="btn btn-outline-danger btn-sm">
+                            🗑 Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-5">
+        <h5>Пока нет открытых вакансий</h5>
+        <p>Добавьте первую, чтобы соискатели могли её увидеть!</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.hover-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,324 @@
+body {
+    font-family: "Inter", Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+    background: #f4f4f4;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: 0.2s ease;
+    background: #2b7bff;
+    color: white;
+}
+
+.btn:hover {
+    opacity: .9;
+    transform: translateY(-2px);
+}
+
+.btn.secondary { background: #777; }
+.btn.outline {
+    background: transparent;
+    border: 2px solid #2b7bff;
+    color: #2b7bff;
+}
+.btn.info { background: #17a2b8; }
+.btn.danger { background: #dc3545; }
+
+.card {
+    background: #fff;
+    padding: 18px;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.preview {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-block {
+    margin-top: 10px;
+}
+
+.search-block label {
+    font-weight: 600;
+    display: block;
+}
+
+.search-block input[type="text"] {
+    width: 260px;
+    padding: 8px;
+    margin-top: 6px;
+}
+
+.filter-block {
+    margin-top: 15px;
+}
+
+.btn-action {
+    padding: 4px 10px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    display: inline-block;
+    transition: background 0.2s ease;
+}
+
+.btn-action-edit { background-color: #3b6cff; }
+.btn-action-edit:hover { background-color: #2f54cc; }
+.btn-action-delete { background-color: #dc3545; }
+.btn-action-delete:hover { background-color: #b02a37; }
+
+.paleblue .pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0;
+    list-style: none;
+    margin: 20px 0 0 0;
+}
+
+.paleblue .pagination li { display: inline-block; }
+
+.paleblue .pagination li a,
+.paleblue .pagination li span {
+    display: inline-block;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: #f0f0f0;
+    color: #333;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.paleblue .pagination li a:hover {
+    background: #2b7bff;
+    color: #fff;
+}
+
+.paleblue .pagination li.active span {
+    background: #2b7bff;
+    color: #fff;
+    border-color: #2b7bff;
+}
+
+.paleblue .pagination li.disabled span {
+    background: #e9ecef;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.article p::first-letter {
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: #2b7bff;
+}
+
+.page-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 10px;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-block input,
+.form-block select,
+.form-block textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    background-color: #fdfdfd;
+}
+
+.form-block input:focus,
+.form-block select:focus,
+.form-block textarea:focus {
+    outline: none;
+    border-color: #2b7bff;
+    box-shadow: 0 0 6px rgba(43, 123, 255, 0.25);
+    background-color: #fff;
+}
+
+.form-block small {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.form-block .errorlist {
+    color: #dc3545;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-size: 0.85rem;
+}
+
+.paleblue tbody tr:hover {
+    background-color: #eaf4ff;
+    transition: background-color 0.2s ease;
+}
+
+.form-actions { margin-top: 15px; }
+
+.perpage-block {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.table-wrapper { margin-top: 25px; }
+
+ul#id_exhibits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+ul#id_exhibits li {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    min-width: 150px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+ul#id_exhibits li:hover {
+    background: #e6f0ff;
+    border-color: #2b7bff;
+}
+
+ul#id_exhibits li input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-right: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+ul#id_exhibits li input[type="checkbox"]:checked {
+    background-color: #2b7bff;
+    border-color: #2b7bff;
+}
+
+ul#id_exhibits li input[type="checkbox"]:checked::after {
+    content: '✔';
+    color: white;
+    position: absolute;
+    top: 0;
+    left: 3px;
+    font-size: 16px;
+    line-height: 18px;
+}
+
+ul#id_exhibits li label {
+    flex: 1;
+    cursor: pointer;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.styled-table thead tr {
+    background-color: #2f3542;
+    color: #fff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 16px;
+}
+
+.styled-table tbody tr:nth-child(even) {
+    background-color: #f5f6fa;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #dfe6e9;
+}
+
+.pagination-block {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+input:required { border-left: 3px solid #ff9f1a; }
+input:optional { border-left: 3px solid #ccc; }
+input:disabled {
+    background: #eee;
+    cursor: not-allowed;
+}
+input:invalid {
+    border-color: #dc3545;
+    background: #ffe7e7;
+}
+input:in-range { border-color: #28a745; }
+input:out-of-range { border-color: #dc3545; }
+
+input[type="radio"]:checked {
+    outline: 2px solid #2b7bff;
+}
+
+@media (max-width: 600px) {
+    ul#id_exhibits {
+        flex-direction: column;
+    }
+    ul#id_exhibits li {
+        width: 100%;
+        min-width: 0;
+    }
+}

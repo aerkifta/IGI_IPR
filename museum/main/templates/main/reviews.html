@@ -1,0 +1,61 @@
+{% extends 'main/base.html' %}
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h1 class="fw-bold mb-3 mb-md-0">Отзывы посетителей</h1>
+    <a href="{% url 'add-review' %}" class="btn btn-primary">Оставить отзыв</a>
+  </div>
+
+  <form method="GET" class="mb-4 d-flex flex-wrap align-items-center gap-2">
+      <button type="submit" name="filter" value="my_reviews" class="btn btn-outline-primary">
+          Показать мои отзывы
+      </button>
+      <button type="submit" name="filter" value="latest" class="btn btn-outline-secondary">
+          Новые сначала
+      </button>
+      <a href="{{ request.path }}" class="btn btn-light border">
+          Очистить фильтры
+      </a>
+  </form>
+
+  {% if reviews %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for el in reviews %}
+    <div class="col">
+      <div class="card shadow-sm h-100 border-0 rounded-4">
+        <div class="card-body">
+
+          <div class="mb-2">
+            {% for i in "12345" %}
+              {% if forloop.counter <= el.grade %}
+                <span style="color: #ffc107; font-size: 1.3rem;">&#9733;</span>
+              {% else %}
+                <span style="color: #ddd; font-size: 1.3rem;">&#9733;</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <p class="card-text text-secondary mb-3">{{ el.text|linebreaksbr }}</p>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ el.author.username }}</strong><br>
+              <small class="text-muted">{{ el.created_at|date:"d.m.Y H:i" }}</small>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-secondary mt-4" role="alert">
+    Отзывов пока нет.
+    Будьте первым — <a href="{% url 'add-review' %}" class="alert-link">оставьте отзыв!</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
